@@ -32,6 +32,11 @@ endchoice
 choice
 	prompt "DRAM parts"
 	depends on DDR_SET_BY_DEVICE
+config DDR_MT41K128M16_RoadRunner
+	bool "DDR3L MT41K128M16(ACME Systems RoadRunner)
+	depends on DDRC
+	help	
+		One MT41K128M16 2Gbit
 config DDR_MT41K128M16_D2
 	bool "DDR3 MT41K128M16(SAMA5D2 Xplained)"
 	depends on DDRC

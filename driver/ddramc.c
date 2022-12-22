@@ -58,6 +58,33 @@ static void ddram_reg_config(struct ddramc_register *ddramc_config)
 	 * */
 	ddramc_config->cal_mr4r = AT91C_DDRC2_COUNT_CAL(0xC852);
 	ddramc_config->tim_calr = AT91C_DDRC2_ZQCS(64);
+#elif defined(CONFIG_DDR_MT41K128M16_RoadRunner)
+/* One DDR3L(MT41H128M16JT-125-K = 16 Mbit x 16 x 8 banks), total 2Gbit on ACME systems RoadRunner*/
+	type = AT91C_DDRC2_MD_DDR3_SDRAM;
+	dbw = AT91C_DDRC2_DBW_16_BITS;
+	col = AT91C_DDRC2_NC_DDR10_SDR9;
+	row = AT91C_DDRC2_NR_14;
+	cas = AT91C_DDRC2_CAS_5;
+	bank = AT91C_DDRC2_NB_BANKS_8;
+#if defined(CONFIG_BUS_SPEED_116MHZ)
+	/* Refresh Timer is (64ms / 8k) * 116MHz = 907(0x38b) */
+	ddramc_config->rtr = 0x38b;
+#elif defined(CONFIG_BUS_SPEED_166MHZ)
+/* Refresh Timer is (64ms / 8k) * 166MHz = 1297(0x511) */
+	ddramc_config->rtr = 0x511;
+#else
+	#error "No CLK setting defined"
+#endif
+	/*
+	 * According to the sama5d2 datasheet and the following values:
+	 * T Sens = 0.75%/C, V Sens = 0.2%/mV, T driftrate = 1C/sec and V driftrate = 15 mV/s
+	 * Warning: note that the values T driftrate and V driftrate are dependent on
+	 * the application environment.
+	 * ZQCS period is 1.5 / ((0.75 x 1) + (0.2 x 15)) = 0.4s
+	 * If tref is 7.8us, we have: 400000 / 7.8 = 51282(0xC852)
+	 * */
+	ddramc_config->cal_mr4r = AT91C_DDRC2_COUNT_CAL(0xC852);
+	ddramc_config->tim_calr = AT91C_DDRC2_ZQCS(64);
 #elif defined(CONFIG_DDR_W632GU6MB)
 /* Two DDR3L(W632GU6MB-12 = 16 Mbit x 16 x 8 banks), total 4 Gbit on SAMA5D2 ICP*/
 	type = AT91C_DDRC2_MD_DDR3_SDRAM;
